@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Bookshelf</string>
+    <string name="neuromancer">Neuromancer</string>
+    <string name="soft_machine">Soft Machine</string>
+    <string name="cat_s_cradle">Cat\'s Cradle</string>
+    <string name="dharma_bums">Dharma Bums</string>
+    <string name="fear_and_loathing">Fear and Loathing</string>
+    <string name="war_of_the_worlds">War Of The Worlds</string>
+    <string name="home">Home</string>
+    <string name="shelf">Shelf</string>
+    <string name="book">Book</string>
+
+
+    <!-- Placeholder Data -->
+    <string name="neuromancer_title">Neuromancer</string>
+    <string name="neuromancer_authorship">William Gibson</string>
+    <string name="neuromancer_publish_date">1984</string>
+    <string name="neuromancer_publisher">Ace Books</string>
+    <string name="neuromancer_awards">Hugo Award, Nebula Award, Philip K. Dick Award</string>
+    <string name="neuromancer_category">Science Fiction, Cyberpunk</string>
+    <string name="neuromancer_rating">4.5</string>
+    <string name="count_zero">Count Zero</string>
+    <string name="english">English</string>
+    <string name="neuromancer_description">Neuromancer is a 1984 science fiction novel by American-Canadian author William Gibson. Set in a near-future dystopia, the narrative follows Henry Case, a computer hacker enlisted into a crew by a powerful artificial intelligence and a traumatised former soldier to complete a high-stakes heist.</string>
+    <string name="ISBN">9780143111603, 0143111604</string>
+    <string name="page_count">231</string>
+    <string name="format">Hardcover</string>
+    <string name="publisher">Phantasia Press</string>
+    <string name="contributor">Neil Gaiman</string>
+    <string name="digitized">12/09/2011</string>
+</resources>
