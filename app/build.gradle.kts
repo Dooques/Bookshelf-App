@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.foundation.layout.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

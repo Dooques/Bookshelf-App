@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.androidcourse_18_bookshelfapp.R
 import com.example.androidcourse_18_bookshelfapp.data.PlaceholderDataSource
 import com.example.androidcourse_18_bookshelfapp.ui.screens.BookScreen
+import com.example.androidcourse_18_bookshelfapp.ui.screens.BookTempScreen
 import com.example.androidcourse_18_bookshelfapp.ui.screens.HomeScreen
 import com.example.androidcourse_18_bookshelfapp.ui.screens.ShelfScreen
 
@@ -45,6 +46,7 @@ fun BookshelfApp(
             )
         }
         composable(route = BookshelfRoutes.Book.name) {
+//            BookTempScreen()
             BookScreen(
                 book = PlaceholderDataSource().placeHolderBookData
             )
