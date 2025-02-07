@@ -47,8 +47,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale.Companion.Fit
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -84,7 +86,13 @@ fun ShelfScreen(
                     searchValue = it
                     setSearchTerms(searchValue)
                 },
-                trailingIcon = { Icon(Icons.Default.Clear, "Clear Text") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "Clear Text",
+                        modifier = modifier.clickable { searchValue = "" }
+                    )
+                               },
                 maxLines = 1,
                 modifier = modifier
                     .fillMaxWidth(0.7f)
@@ -187,11 +195,7 @@ fun BookInfoCard(
 ) {
     val fontSize = 11.sp
     val lineHeight = 12.sp
-
-    var categories = ""
-    for (item in volume.volumeInfo.categories) {
-        categories += "\n" + item
-    }
+    val uriHandler = LocalUriHandler.current
 
     Card(
         shape = RectangleShape,
@@ -236,11 +240,17 @@ fun BookInfoCard(
                         lineHeight = lineHeight,
                         modifier = modifier.padding(vertical = 8.dp)
                     )
-                    if (volume.volumeInfo.categories.isNotEmpty()) Text(
+                    if (volume.volumeInfo.categories.isNotEmpty()) {
+                        var categories = ""
+                        for (item in volume.volumeInfo.categories) {
+                            categories += "\n" + item
+                        }
+                        Text(
                         text = "Categories: $categories",
                         fontSize = fontSize,
                         lineHeight = lineHeight
-                    )
+                        )
+                    }
                     val language = if (volume.volumeInfo.language == "en")
                         "English" else "Not English"
                     if (volume.volumeInfo.language.isNotEmpty()) Text(
@@ -262,9 +272,20 @@ fun BookInfoCard(
                         )
                     }
                 }
-                if (volume.saleInfo.retailPrice?.amount?.isNaN() == false) {
+                if (
+                    volume.saleInfo.retailPrice?.amount?.isNaN() == false
+                    && !volume.saleInfo.buyLink.isNullOrBlank()
+                    ) {
                     HorizontalDivider()
-                    Column(modifier.padding(8.dp)) {
+                    Column(
+                        modifier
+                            .padding(8.dp)
+                            .clickable {
+                                val link = volume.saleInfo.buyLink
+                                uriHandler.openUri(link)
+                            }
+
+                    ) {
                         Text("Get the book")
                         AffiliateLink(
                             volume = volume,

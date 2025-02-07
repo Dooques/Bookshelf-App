@@ -5,6 +5,8 @@ import com.example.androidcourse_18_bookshelfapp.data.NetworkBookshelfRepository
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
 
@@ -15,7 +17,6 @@ interface AppContainer {
 class DefaultAppContainer: AppContainer {
 
     private val baseUrl = "https://www.googleapis.com/"
-
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(
