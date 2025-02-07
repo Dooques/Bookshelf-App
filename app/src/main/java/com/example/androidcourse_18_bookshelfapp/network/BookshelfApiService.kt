@@ -10,12 +10,12 @@ interface BookshelfApiService {
     suspend fun getBookData(
         @Query("q") string: String,
         @Query("maxResults") maxResults: String = "40",
-        @Query("key") apiKey: String = "AIzaSyAFN5Sj-uX7Ux6Aeunromdk-oaPGpRV47o"
+        @Query("key") apiKey: String = API_KEY
     ): Bookshelf.BookList
 
     @GET("books/v1/volumes/{volumeId}")
     suspend fun getVolume(
         @Path("volumeId") string: String,
-        @Query("key") apiKey: String = "AIzaSyAFN5Sj-uX7Ux6Aeunromdk-oaPGpRV47o"
+        @Query("key") apiKey: String = API_KEY
     ): Bookshelf.Volume
 }
