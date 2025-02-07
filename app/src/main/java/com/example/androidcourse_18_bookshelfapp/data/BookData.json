@@ -1,0 +1,85 @@
+{
+  "kind": "books#volume",
+  "id": "kXyFAwAAQBAJ",
+  "etag": "uu0Oa3Mc0Lo",
+  "selfLink": "https://www.googleapis.com/books/v1/volumes/kXyFAwAAQBAJ",
+  "volumeInfo": {
+    "title": "The Music Sound",
+    "authors": [
+      "Nicolae Sfetcu"
+    ],
+    "publisher": "Nicolae Sfetcu",
+    "publishedDate": "2014-05-07",
+    "description": "<p> </p><p>A guide for music: compositions, events, forms, genres, groups, history, \nindustry, instruments, language, live music, musicians, songs, musicology, \ntechniques, terminology , theory, music video.</p>\n<p>Music is a human activity which involves \nstructured and audible sounds, which is used for artistic or aesthetic, \nentertainment, or ceremonial purposes.</p>\n<p>The traditional or classical European aspects \nof music often listed are those elements given primacy in European-influenced \nclassical music: melody, harmony, rhythm, tone color/timbre, and form. A more \ncomprehensive list is given by stating the aspects of sound: pitch, timbre, \nloudness, and duration.</p>\n<p>Common terms used to discuss particular pieces \ninclude melody, which is a succession of notes heard as some sort of unit; \nchord, which is a simultaneity of notes heard as some sort of unit; chord \nprogression, which is a succession of chords (simultaneity succession); harmony, \nwhich is the relationship between two or more pitches; counterpoint, which is \nthe simultaneity and organization of different melodies; and rhythm, which is \nthe organization of the durational aspects of music.</p>\n",
+    "readingModes": {
+      "text": true,
+      "image": true
+    },
+    "pageCount": 6042,
+    "printedPageCount": 6042,
+    "printType": "BOOK",
+    "categories": [
+      "Music / Genres & Styles / General"
+    ],
+    "averageRating": 2,
+    "ratingsCount": 4,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "2.4.5.0.preview.3",
+    "panelizationSummary": {
+      "containsEpubBubbles": false,
+      "containsImageBubbles": false
+    },
+    "imageLinks": {
+      "smallThumbnail": "http://books.google.com/books/publisher/content?id=kXyFAwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&imgtk=AFLRE73INIoUfgw_5bzjRaeygAAeR-bPqip0EUNvEUC1-G7wmGwRwYxUCx3SSeP4CHhO2foBJgjaRjxNCIQ8Szv1AF6_ZyOP6R-vrJ1CZLswV4EK3eWrMEzmzuTz2AM4wgiStVyz_wvh&source=gbs_api",
+      "thumbnail": "http://books.google.com/books/publisher/content?id=kXyFAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&imgtk=AFLRE73GsMNx11W3hSLIX3ioecIzuksRINz0DUv6pGChLcYjahi6WAHo2Kj7Zy7ImdH_W025xxRtYPhONcb1NJYd3ULO2-ax9wj-r0sIh51JSGy-N6JY4cIYGALtv5_siJVskG1Sci_b&source=gbs_api",
+      "small": "http://books.google.com/books/publisher/content?id=kXyFAwAAQBAJ&printsec=frontcover&img=1&zoom=2&edge=curl&imgtk=AFLRE73nqveEjXML2-KarejuaXiKGyIJ56dnTQp0SC2LTqgYVIb-PXb4U_03bYf6IX2z8O6kfTzRTimdFfXu5vvLhMpmFsCXSHh5rNNS6Z0kzwUYO2YOnXTaSYAZk-RkpSwS4oq1TeaT&source=gbs_api",
+      "medium": "http://books.google.com/books/publisher/content?id=kXyFAwAAQBAJ&printsec=frontcover&img=1&zoom=3&edge=curl&imgtk=AFLRE71Ku4UUkWiQooJRfiAyXHWSd59gxL1vAy-8Tg2s_rn9Me8cqxlItAzNrMMmFEWp6VmxlrA8aFRUVHll8soOXpTdShdHCjL6j8H3oeAVBGMPh12JD7dbZbPLcQJcVRvf1XsftwKc&source=gbs_api",
+      "large": "http://books.google.com/books/publisher/content?id=kXyFAwAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&imgtk=AFLRE70fX8fedOaOXKkt5qm7CuggrKvUkm6hqSi63zLkwowRWLEeOU_zrfZvHXxNXFncXIRUZ4BuwgKerrzymtNwfprWb_qAazBNpeFDROjIIkNfjZAi_1JtPkmqH9ynVwIw8DmuCsRL&source=gbs_api",
+      "extraLarge": "http://books.google.com/books/publisher/content?id=kXyFAwAAQBAJ&printsec=frontcover&img=1&zoom=6&edge=curl&imgtk=AFLRE71X433vYrIFxdXj8f2sW7FtoIPUPggJWg9R4VfgknWMltXxswEfsY01lF2Ez4_ReLAgF7A7UDj6u2igHPRSJmEHIPMBw53Kgv2HtPwlQYLiCvMD6KhHYbWQBG5_cE1fKJaD1ju9&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.co.uk/books?id=kXyFAwAAQBAJ&hl=&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=kXyFAwAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=kXyFAwAAQBAJ"
+  },
+  "layerInfo": {
+    "layers": [
+      {
+        "layerId": "geo",
+        "volumeAnnotationsVersion": "7"
+      }
+    ]
+  },
+  "saleInfo": {
+    "country": "GB",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+      "amount": 0,
+      "currencyCode": "GBP"
+    },
+    "retailPrice": {
+      "amount": 0,
+      "currencyCode": "GBP"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=kXyFAwAAQBAJ&rdid=book-kXyFAwAAQBAJ&rdot=1&source=gbs_api"
+  },
+  "accessInfo": {
+    "country": "GB",
+    "viewability": "ALL_PAGES",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+      "isAvailable": true
+    },
+    "pdf": {
+      "isAvailable": true,
+      "downloadLink": "http://books.google.co.uk/books/download/The_Music_Sound.pdf?id=kXyFAwAAQBAJ&hl=&output=pdf&sig=ACfU3U30LMrOUIqW0PNSgUotId50-WQd1Q&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=kXyFAwAAQBAJ&hl=&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+  }
+}

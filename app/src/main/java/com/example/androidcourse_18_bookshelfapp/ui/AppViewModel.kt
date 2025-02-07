@@ -4,14 +4,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.androidcourse_18_bookshelfapp.BookshelfApplication
+import com.example.androidcourse_18_bookshelfapp.data.BookshelfRepository
 import com.example.androidcourse_18_bookshelfapp.model.Bookshelf
-import com.example.androidcourse_18_bookshelfapp.network.BookshelfApi
-import kotlinx.coroutines.delay
+import com.example.androidcourse_18_bookshelfapp.model.SearchUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jsoup.Jsoup
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -21,21 +28,37 @@ sealed interface BookshelfUiState {
     data object Loading: BookshelfUiState
 }
 
-class BookshelfViewModel: ViewModel() {
-    var bookshelfUiState: BookshelfUiState by mutableStateOf(BookshelfUiState.Loading)
-    private var _bookUiState = MutableStateFlow(listOf(Bookshelf.Volume()))
-    val bookUiState: StateFlow<List<Bookshelf.Volume>> = _bookUiState.asStateFlow()
+class BookshelfViewModel(
+    private val bookshelfRepository: BookshelfRepository
+): ViewModel() {
+    var bookUiState: BookshelfUiState by mutableStateOf(BookshelfUiState.Loading)
+        private set
+
+    private var _searchUiState =
+        MutableStateFlow(SearchUiState(""))
+    val searchUiState:
+            StateFlow<SearchUiState> = _searchUiState.asStateFlow()
 
     init {
         getBookData()
-
     }
 
-    private fun getBookData() {
+    fun setSearchTerms(search: String) {
+        _searchUiState.update { currentState ->
+            currentState.copy(
+                search = search
+            )
+        }
+    }
+
+    private fun processSearchTerms(): String =
+        searchUiState.value.search.replace(" ", "+").lowercase()
+
+    fun getBookData() {
         viewModelScope.launch {
-            bookshelfUiState = BookshelfUiState.Loading
-            bookshelfUiState = try {
-                val bookList = BookshelfApi.retrofitService.searchLibrary("final+fantasy")
+            bookUiState = BookshelfUiState.Loading
+            bookUiState = try {
+                val bookList = bookshelfRepository.searchLibrary(processSearchTerms())
                 val volumeList = getVolumes(bookList)
                 BookshelfUiState.Success(volumeList)
             } catch (e: IOException) {
@@ -46,8 +69,6 @@ class BookshelfViewModel: ViewModel() {
         }
     }
 
-    fun returnVolumeData() = bookUiState.value
-
     private suspend fun getVolumes(bookshelf: Bookshelf.BookList): List<Bookshelf.Volume> {
         var volumeList: List<Bookshelf.Volume> = mutableListOf()
         var bookCounter = 0
@@ -55,7 +76,7 @@ class BookshelfViewModel: ViewModel() {
             if (bookCounter >= 20) {
                 break
             }
-            val volume =  BookshelfApi.retrofitService.getVolume(book.id)
+            val volume =  bookshelfRepository.getVolume(book.id)
             if (volume.volumeInfo.imageLinks.large.isEmpty()
                 || volume.volumeInfo.imageLinks.medium.isEmpty()
                 || volume.volumeInfo.imageLinks.small.isEmpty()
@@ -63,10 +84,16 @@ class BookshelfViewModel: ViewModel() {
                 continue
             }
             updateUrl(volume)
+            cleanText(volume)
             volumeList = volumeList + volume
             bookCounter++
         }
         return volumeList
+    }
+
+    private fun cleanText(volume: Bookshelf.Volume) {
+        val string = volume.volumeInfo.description
+        volume.volumeInfo.description = Jsoup.parse(string).text()
     }
 
     private fun updateUrl(volume: Bookshelf.Volume) {
@@ -81,5 +108,15 @@ class BookshelfViewModel: ViewModel() {
 
         val thumbnail = volume.volumeInfo.imageLinks.thumbnail
         volume.volumeInfo.imageLinks.thumbnail = thumbnail.replace("http", "https")
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as BookshelfApplication)
+                val bookshelfRepository = application.container.bookshelfRepository
+                BookshelfViewModel(bookshelfRepository)
+            }
+        }
     }
 }

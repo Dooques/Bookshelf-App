@@ -1,5 +1,6 @@
 package com.example.androidcourse_18_bookshelfapp.ui.screens
 
+import android.inputmethodservice.Keyboard
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,26 +11,41 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.androidcourse_18_bookshelfapp.R
+import com.example.androidcourse_18_bookshelfapp.model.SearchUiState
 import com.example.androidcourse_18_bookshelfapp.ui.theme.AppTypography
 import com.example.androidcourse_18_bookshelfapp.ui.theme.BookshelfTheme
 import com.example.androidcourse_18_bookshelfapp.ui.theme.bodyFontFamily
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
+    setSearchTerms: (String) -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,7 +57,10 @@ fun HomeScreen(
         ) {
             Title()
             Description()
-            SearchBar(onClick = onClick)
+            SearchBar(
+                onClick = onClick,
+                setSearchTerms = setSearchTerms
+            )
         }
         Box(
             contentAlignment = Alignment.BottomStart,
@@ -92,48 +111,40 @@ fun Description(modifier: Modifier = Modifier) {
 @Composable
 fun SearchBar(
     onClick: () -> Unit,
+    setSearchTerms: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SearchField(
+        var searchValue by remember { mutableStateOf("") }
+        TextField(
+            value = searchValue,
+            placeholder = { Text("Search by genre or title...") },
+            onValueChange = {
+                searchValue = it
+                setSearchTerms(searchValue)
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onClick() }
+            ),
+            maxLines = 1,
             modifier = modifier
-            .fillMaxWidth()
-            .padding(32.dp)
+                .fillMaxWidth(0.7f)
         )
         Spacer(modifier = modifier.size(40.dp))
-        SearchButton(
-            onClick = onClick,
-            shape = CircleShape,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-        )
+        Button(
+            onClick = {
+                    onClick()
+                      },
+            shape = RectangleShape,
+            modifier = modifier
+                .fillMaxWidth(0.7f)
+        ) { Text("Search") }
     }
-}
-@Composable
-fun SearchField(
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        value = "Beat Poetry",
-        onValueChange = {},
-        modifier = modifier
-    )
-}
-
-@Composable
-fun SearchButton(
-    onClick: () -> Unit,
-    shape: Shape,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        shape = shape,
-        modifier = modifier
-    ) { Text("Search") }
 }
 
 
@@ -142,7 +153,10 @@ fun SearchButton(
 fun HomeScreenPreview() {
     BookshelfTheme {
         Surface {
-            HomeScreen(onClick = {})
+            HomeScreen(
+                onClick = {},
+                setSearchTerms = {}
+            )
         }
     }
 }

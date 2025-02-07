@@ -2,33 +2,62 @@ package com.example.androidcourse_18_bookshelfapp.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.layout.ContentScale.Companion.Fit
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.androidcourse_18_bookshelfapp.R
 import com.example.androidcourse_18_bookshelfapp.data.PlaceholderDataSource
 import com.example.androidcourse_18_bookshelfapp.model.Bookshelf
 import com.example.androidcourse_18_bookshelfapp.model.PlaceholderBook
@@ -39,29 +68,41 @@ import retrofit2.HttpException
 
 @Composable
 fun ShelfScreen(
-    onClick: () -> Unit,
     searchAgain: () -> Unit,
+    setSearchTerms: (String) -> Unit,
+    bookshelfViewModel: BookshelfViewModel,
     modifier: Modifier = Modifier
 ) {
-    val bookshelfViewModel: BookshelfViewModel = viewModel()
+    var searchValue by remember { mutableStateOf("") }
+    val bookUiState: BookshelfUiState = bookshelfViewModel.bookUiState
     Column {
-        Row(Modifier.fillMaxHeight(0.08f)) {
-            SearchField(
+        Row {
+            TextField(
+                value = searchValue,
+                placeholder = { Text("Search by genre or title...") },
+                onValueChange = {
+                    searchValue = it
+                    setSearchTerms(searchValue)
+                },
+                trailingIcon = { Icon(Icons.Default.Clear, "Clear Text") },
+                maxLines = 1,
                 modifier = modifier
-                    .fillMaxWidth(0.75f)
-                    .fillMaxHeight()
+                    .fillMaxWidth(0.7f)
             )
-            SearchButton(
-                onClick = searchAgain,
+            Button(
+                onClick = {
+                    searchAgain()
+                },
                 shape = RectangleShape,
                 modifier = modifier
-                    .fillMaxSize()
-            )
+                    .fillMaxWidth()
+                    .size(56.dp)
+            ) { Text("Search") }
         }
-        when (val bookshelfUiState = bookshelfViewModel.bookshelfUiState) {
+        when (bookUiState) {
             is BookshelfUiState.Loading -> BookshelfResultsLoading()
-            is BookshelfUiState.Success -> ShelfGrid(bookshelfUiState.books, onClick)
-            is BookshelfUiState.Error -> BookshelfResultsError(bookshelfUiState.error)
+            is BookshelfUiState.Success -> ShelfGrid(books = bookUiState.books)
+            is BookshelfUiState.Error -> BookshelfResultsError(bookUiState.error)
         }
     }
 }
@@ -69,7 +110,6 @@ fun ShelfScreen(
 @Composable
 fun ShelfGrid(
     books: List<Bookshelf.Volume>,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -80,11 +120,10 @@ fun ShelfGrid(
     ) {
         items(
             items = books,
-            key = {book -> book.volumeInfo.title}
+            key = {book -> book.id }
         ) { book ->
             BookCover(
                 book = book,
-                onClick = onClick
             )
         }
     }
@@ -93,36 +132,225 @@ fun ShelfGrid(
 @Composable
 fun BookCover(
     book: Bookshelf.Volume,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val large = book.volumeInfo.imageLinks.large
     val medium = book.volumeInfo.imageLinks.medium
     val small = book.volumeInfo.imageLinks.small
 
-    AsyncImage(
-        model = ImageRequest.Builder(context = LocalContext.current)
-            .data(large.ifEmpty { medium.ifEmpty { small } })
-            .build(),
-        contentDescription = book.volumeInfo.title,
-        contentScale = Fit,
-        modifier = modifier
-            .clickable(onClick = onClick)
-            .aspectRatio(6f/9f)
-    )
+    var showCard by remember { mutableStateOf(false) }
+    fun flipCard() { showCard = !showCard }
+
+    Box {
+        AsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(large)
+                .build(),
+            contentDescription = book.volumeInfo.title,
+            contentScale = Fit,
+            modifier = modifier
+                .clickable(onClick = { flipCard() })
+                .aspectRatio(6f / 9f)
+        )
+        if (showCard) {
+            BookInfoCard(
+                volume = book,
+                onClick = { flipCard() }
+            )
+        }
+    }
 }
 
 @Composable
 fun BookshelfResultsError(error: HttpException?) {
     Surface(Modifier.fillMaxSize()) {
-        Text(error.toString())
+        Column {
+            Text(error.toString())
+        }
     }
 }
 
 @Composable
 fun BookshelfResultsLoading() {
     Surface(Modifier.fillMaxSize()) {
-        Text("Loading")
+        Column {
+            Text("Loading...")
+        }
+    }
+}
+
+@Composable
+fun BookInfoCard(
+    volume: Bookshelf.Volume,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val fontSize = 11.sp
+    val lineHeight = 12.sp
+
+    var categories = ""
+    for (item in volume.volumeInfo.categories) {
+        categories += "\n" + item
+    }
+
+    Card(
+        shape = RectangleShape,
+        colors = CardColors(
+            containerColor = Color.Black.copy(alpha = 0.6f),
+            contentColor = Color.White,
+            disabledContainerColor = Color.Black.copy(alpha = 0.6f),
+            disabledContentColor = Color.White,
+        ),
+        onClick = onClick,
+        modifier = modifier
+            .aspectRatio(6f / 9f)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = modifier.fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+        ) {
+            OutlinedCard(
+                colors = CardColors(
+                    containerColor = Color.Black.copy(alpha = 0.5f),
+                    contentColor = Color.White,
+                    disabledContainerColor = colorScheme.secondaryContainer,
+                    disabledContentColor = colorScheme.onSecondary,
+                ),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                // Title and Author
+                Column(modifier = modifier.padding(8.dp)) {
+                    Text(volume.volumeInfo.title)
+                    Text("by ${volume.volumeInfo.authors[0]}")
+                }
+                HorizontalDivider()
+
+                // About Book
+                Column(modifier = modifier.padding(8.dp)) {
+                    if (volume.volumeInfo.publishedDate.isNotEmpty()) Text(
+                        text = "Published: " + volume.volumeInfo.publishedDate,
+                        fontSize = fontSize,
+                        lineHeight = lineHeight,
+                        modifier = modifier.padding(vertical = 8.dp)
+                    )
+                    if (volume.volumeInfo.categories.isNotEmpty()) Text(
+                        text = "Categories: $categories",
+                        fontSize = fontSize,
+                        lineHeight = lineHeight
+                    )
+                    val language = if (volume.volumeInfo.language == "en")
+                        "English" else "Not English"
+                    if (volume.volumeInfo.language.isNotEmpty()) Text(
+                        text = language,
+                        fontSize = fontSize,
+                        lineHeight = lineHeight,
+                        modifier = modifier.padding(vertical = 8.dp)
+                    )
+                }
+                if (volume.volumeInfo.description.isNotEmpty()) {
+                    HorizontalDivider()
+
+                    // Book Description
+                    Column(modifier = modifier.padding(8.dp)) {
+                        Text(
+                            volume.volumeInfo.description,
+                            fontSize = fontSize,
+                            lineHeight = lineHeight
+                        )
+                    }
+                }
+                if (volume.saleInfo.retailPrice?.amount?.isNaN() == false) {
+                    HorizontalDivider()
+                    Column(modifier.padding(8.dp)) {
+                        Text("Get the book")
+                        AffiliateLink(
+                            volume = volume,
+                            fontSize = fontSize,
+                            lineHeight = lineHeight,
+                            modifier = modifier.padding(8.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AffiliateLink(
+    volume: Bookshelf.Volume,
+    fontSize: TextUnit,
+    lineHeight: TextUnit,
+    modifier: Modifier = Modifier) {
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        modifier = modifier.fillMaxWidth()
+            .padding(
+                vertical = 4.dp
+            )
+    ) {
+        Icon(
+            Icons.Default.ShoppingCart,
+            contentDescription = "",
+            Modifier.size(25.dp)
+        )
+        Spacer(modifier.size(8.dp))
+        Column {
+            Text("Google Play Store", fontSize = fontSize, lineHeight = lineHeight)
+            Text(
+                "£${volume.saleInfo.retailPrice?.amount} - eBook",
+                fontSize = fontSize,
+                lineHeight = lineHeight
+            )
+        }
+    }
+}
+
+@Composable
+fun ShelfGridPreview(
+    books: List<PlaceholderBook>,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp)
+) {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        modifier = modifier,
+        contentPadding = contentPadding
+    ) {
+        items(
+            items = books,
+            key = {book -> book.title}
+        ) { book ->
+            BookCoverPreview(
+                book = book,
+            )
+        }
+    }
+}
+
+@Composable
+fun BookCoverPreview(
+    book: PlaceholderBook,
+    modifier: Modifier = Modifier
+) {
+    var showCard by remember { mutableStateOf(true) }
+    fun onClick() { showCard = !showCard }
+    Image(
+        painter = painterResource(book.imgSrc),
+        contentDescription = stringResource(book.title),
+        contentScale = Fit,
+        modifier = modifier
+            .clickable(onClick = { onClick() })
+            .aspectRatio(6f / 9f)
+    )
+    if (showCard) {
+       BookInfoCard(
+           volume = Bookshelf.Volume(),
+           onClick = { onClick() }
+       )
     }
 }
 
@@ -131,10 +359,28 @@ fun BookshelfResultsLoading() {
 fun ShelfScreenPreview() {
     BookshelfTheme {
         Surface {
-            ShelfScreen(
-                onClick = {},
-                searchAgain = {}
-            )
+            Column {
+                Row(Modifier.fillMaxHeight(0.08f)) {
+                    var searchValue by remember { mutableStateOf("") }
+                    TextField(
+                        value = searchValue,
+                        placeholder = { Text("Search") },
+                        onValueChange = {
+                            searchValue = it
+                        },
+                        maxLines = 1,
+                    )
+                    Button(
+                        onClick = {},
+                        shape = RectangleShape,
+                    ) { Text("Search") }
+                }
+                ShelfGridPreview(
+                    books = PlaceholderDataSource().placeholderBooks,
+                    modifier = Modifier,
+                    contentPadding = PaddingValues(0.dp),
+                )
+            }
         }
     }
 }

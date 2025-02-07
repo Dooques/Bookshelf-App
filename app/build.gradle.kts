@@ -1,8 +1,11 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
+    id("org.jetbrains.kotlinx.dataframe") version "0.15.0"
 
 }
 
@@ -12,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.androidcourse_18_bookshelfapp"
-        minSdk = 25
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -53,6 +56,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.navigation.compose)
+    implementation (libs.jsoup)
 
     // Retrofit2 & Gson Converter
     implementation(libs.retrofit)

@@ -62,7 +62,6 @@ class Bookshelf {
         var large: String = ""
     )
 
-
     @Serializable
     @JsonIgnoreUnknownKeys
     data class VolumeInfo(
@@ -70,9 +69,10 @@ class Bookshelf {
         val authors: List<String> = listOf(),
         val publisher: String = "",
         val publishedDate: String = "",
-        val description: String = "",
+        var description: String = "",
         val industryIdentifiers: List<Identifier> = listOf(),
         val pageCount: Int = 0,
+        val printType: String = "",
         val categories: List<String> = listOf(),
         val imageLinks: ImageLink = ImageLink(""),
         val language: String = "",

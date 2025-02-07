@@ -1,6 +1,8 @@
 package com.example.androidcourse_18_bookshelfapp.data
 
+import androidx.compose.ui.res.stringResource
 import com.example.androidcourse_18_bookshelfapp.R
+import com.example.androidcourse_18_bookshelfapp.model.Bookshelf
 import com.example.androidcourse_18_bookshelfapp.model.PlaceholderBook
 import com.example.androidcourse_18_bookshelfapp.model.PlaceholderBookData
 
@@ -13,52 +15,52 @@ class PlaceholderDataSource {
         PlaceholderBook(R.string.dharma_bums, R.drawable.dharma_bums),
         PlaceholderBook(R.string.fear_and_loathing, R.drawable.fear_and_loathing)
     )
-    val placeHolderBookData: PlaceholderBookData = PlaceholderBookData(
-        title = R.string.neuromancer_title,
-        imgSrc = R.drawable.neuromancer, // Placeholder - will be converted to drawable resource
-        description = R.string.neuromancer_description,
-        authorship = R.string.neuromancer_authorship, // Placeholder - will be converted to stringResource
-        publishDate = R.string.neuromancer_publish_date, // Placeholder - will be converted to stringResource
-        publisher = R.string.neuromancer_publisher, // Placeholder - will be converted to stringResource
-        awards = R.string.neuromancer_awards, // Placeholder - will be converted to stringResource
-        genres = R.string.neuromancer_category, // Placeholder - will be converted to stringResource
-        nominations = R.string.neuromancer_category, // Placeholder - will be converted to stringResource
-        rating = R.string.neuromancer_rating,
-        originalLanguage = R.string.english,
-        sequel = R.string.count_zero,
-        adaptations = R.string.neuromancer,
-        subject = R.string.neuromancer_category,
-        isbn = R.string.ISBN,
-        pageCount = R.string.page_count,
-        editionPublished = R.string.neuromancer_publish_date,
-        format = R.string.format,
-        contributor = R.string.contributor,
-        digitized = R.string.digitized
+    val placeHolderBookData: Bookshelf.Volume = Bookshelf.Volume(
+        id = "0",
+        volumeInfo = Bookshelf.VolumeInfo(
+            title = "Neuromancer",
+            authors = listOf("William Gibson"),
+            publisher = "Ace Books",
+            publishedDate = "1984",
+            description = R.string.neuromancer_description.toString(),
+            industryIdentifiers = listOf(Bookshelf.Identifier("ISBN", R.string.ISBN.toString())),
+            pageCount = 231,
+            printType = "Book",
+            categories = listOf("Science Fiction", "Cyberpunk"),
+            imageLinks = Bookshelf.ImageLink(
+                large =
+                "https://books.google.com/books/content?id=3CjfiHmIlQQC&printsec=frontcover&img=1&zoom=4&edge=curl&imgtk=AFLRE73c0A4uqYQ3GVvpyfa7NkI-wF1B6ask5ak7px6AqjXcRSnQdbT8m_8QozuImgU7ibDjHZkKtYr0BIPWTm4ACG0BFV2KKvRM8snthxweyhAgdVZA-H_dU9acjhwMtRBYfFeAp0q8&source=gbs_api"),
+            language = "en"
+        ),
+        saleInfo = Bookshelf.SaleInfo(
+            country = "GB",
+            saleability = "NOT_FOR_SALE",
+            isEbook = false,
+        ),
     )
-    val metaDataLayout: Map<String, List<Pair<String, Int>>> = mapOf(
+    val metaDataLayout: Map<String, List<Pair<String, Any>>> = mapOf(
         "about" to listOf(
-            Pair("Originally published: ", placeHolderBookData.publishDate),
-            Pair("Awards:\n", placeHolderBookData.awards),
-            Pair("Nominations:\n", placeHolderBookData.nominations),
-            Pair("Genres:\n", placeHolderBookData.genres),
-            Pair("Languages: ", placeHolderBookData.originalLanguage),
-            Pair("Followed by: ", placeHolderBookData.sequel),
-            Pair("Adaptations:\n", placeHolderBookData.adaptations),
-            Pair("Subject: \n", placeHolderBookData.subject)
+            Pair("Originally published: ", placeHolderBookData.volumeInfo.publishedDate),
+//            Pair("Awards:\n", placeHolderBookData.awards),
+//            Pair("Nominations:\n", placeHolderBookData.nominations),
+            Pair("Genres:\n", placeHolderBookData.volumeInfo.categories),
+            Pair("Languages: ", placeHolderBookData.volumeInfo.language),
+//            Pair("Followed by: ", placeHolderBookData.volumeInfo.),
+//            Pair("Adaptations:\n", placeHolderBookData.v),
+            Pair("Subject: \n", placeHolderBookData.volumeInfo.categories)
         ),
         "editionCol1" to listOf(
-            Pair("ISBN: ", placeHolderBookData.isbn),
-            Pair("Page Count: ", placeHolderBookData.pageCount),
-            Pair("Published: ", placeHolderBookData.editionPublished),
-            Pair("Format: ", placeHolderBookData.format),
+            Pair("ISBN: ", placeHolderBookData.volumeInfo.industryIdentifiers[0].identifier),
+            Pair("Page Count: ", placeHolderBookData.volumeInfo.pageCount),
+            Pair("Published: ", placeHolderBookData.volumeInfo.publishedDate),
+            Pair("Format: ", placeHolderBookData.volumeInfo.printType),
 
         ),
         "editionCol2" to listOf(
-            Pair("Publisher: ", placeHolderBookData.publisher),
-            Pair("Digitized: ", placeHolderBookData.digitized),
-            Pair("Language: ", placeHolderBookData.originalLanguage),
-            Pair("Author: ", placeHolderBookData.authorship),
+            Pair("Publisher: ", placeHolderBookData.volumeInfo.publisher),
+            Pair("Digitized: ", placeHolderBookData.volumeInfo.publishedDate),
+            Pair("Language: ", placeHolderBookData.volumeInfo.language),
+            Pair("Author: ", placeHolderBookData.volumeInfo.authors[0]),
         )
-
     )
 }
