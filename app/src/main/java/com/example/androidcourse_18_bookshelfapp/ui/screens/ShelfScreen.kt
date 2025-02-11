@@ -2,7 +2,6 @@ package com.example.androidcourse_18_bookshelfapp.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -23,15 +21,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -50,23 +45,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.androidcourse_18_bookshelfapp.R
 import com.example.androidcourse_18_bookshelfapp.data.PlaceholderDataSource
-import com.example.androidcourse_18_bookshelfapp.model.Bookshelf
+import com.example.androidcourse_18_bookshelfapp.model.BookshelfModel
 import com.example.androidcourse_18_bookshelfapp.model.PlaceholderBook
 import com.example.androidcourse_18_bookshelfapp.ui.BookshelfUiState
 import com.example.androidcourse_18_bookshelfapp.ui.BookshelfViewModel
 import com.example.androidcourse_18_bookshelfapp.ui.theme.BookshelfTheme
-import retrofit2.HttpException
 
 @Composable
 fun ShelfScreen(
@@ -117,7 +107,7 @@ fun ShelfScreen(
 
 @Composable
 fun ShelfGrid(
-    books: List<Bookshelf.Volume>,
+    books: List<BookshelfModel.Volume>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -139,7 +129,7 @@ fun ShelfGrid(
 
 @Composable
 fun BookCover(
-    book: Bookshelf.Volume,
+    book: BookshelfModel.Volume,
     modifier: Modifier = Modifier
 ) {
     val large = book.volumeInfo.imageLinks.large
@@ -152,7 +142,7 @@ fun BookCover(
     Box {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(large)
+                .data(large.let { medium.let { small } })
                 .build(),
             contentDescription = book.volumeInfo.title,
             contentScale = Fit,
@@ -170,7 +160,7 @@ fun BookCover(
 }
 
 @Composable
-fun BookshelfResultsError(error: HttpException?) {
+fun BookshelfResultsError(error: Exception?) {
     Surface(Modifier.fillMaxSize()) {
         Column {
             Text(error.toString())
@@ -189,7 +179,7 @@ fun BookshelfResultsLoading() {
 
 @Composable
 fun BookInfoCard(
-    volume: Bookshelf.Volume,
+    volume: BookshelfModel.Volume,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -226,9 +216,11 @@ fun BookInfoCard(
                     .padding(16.dp)
             ) {
                 // Title and Author
-                Column(modifier = modifier.padding(8.dp)) {
-                    Text(volume.volumeInfo.title)
-                    Text("by ${volume.volumeInfo.authors[0]}")
+                if (volume.volumeInfo.title.isNotEmpty() && volume.volumeInfo.authors.isNotEmpty()) {
+                    Column(modifier = modifier.padding(8.dp)) {
+                        Text(volume.volumeInfo.title)
+                        Text("by ${volume.volumeInfo.authors[0]}")
+                    }
                 }
                 HorizontalDivider()
 
@@ -302,7 +294,7 @@ fun BookInfoCard(
 
 @Composable
 fun AffiliateLink(
-    volume: Bookshelf.Volume,
+    volume: BookshelfModel.Volume,
     fontSize: TextUnit,
     lineHeight: TextUnit,
     modifier: Modifier = Modifier) {
@@ -369,7 +361,7 @@ fun BookCoverPreview(
     )
     if (showCard) {
        BookInfoCard(
-           volume = Bookshelf.Volume(),
+           volume = BookshelfModel.Volume(),
            onClick = { onClick() }
        )
     }

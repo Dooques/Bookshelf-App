@@ -1,12 +1,11 @@
-import com.android.build.api.dsl.Packaging
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
-    id("org.jetbrains.kotlinx.dataframe") version "0.15.0"
-
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -20,7 +19,19 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        val localProperties = Properties()
+        val localPropertiesFile = project.rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(localPropertiesFile.inputStream())
+        }
+        buildConfigField(
+            "String",
+            "G_BOOKS_API_KEY",
+            localProperties.getProperty("G_BOOKS_API_KEY") ?: "\"\""
+        )
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -41,7 +52,9 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
 }
 
 dependencies {
@@ -57,8 +70,9 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.navigation.compose)
     implementation (libs.jsoup)
+    implementation(libs.google.secrets.gradle.plugin)
 
-    // Retrofit2 & Gson Converter
+    // Retrofit2 & Json Converter
     implementation(libs.retrofit)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.coil.compose)
@@ -66,8 +80,10 @@ dependencies {
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+    implementation(libs.androidx.ui.test.junit4.android)
 
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

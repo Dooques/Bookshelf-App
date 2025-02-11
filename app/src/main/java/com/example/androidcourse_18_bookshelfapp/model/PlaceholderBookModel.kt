@@ -2,17 +2,6 @@ package com.example.androidcourse_18_bookshelfapp.model
 
 import com.example.androidcourse_18_bookshelfapp.data.PlaceholderDataSource
 
-data class Book(
-    val title: Int,
-    val imgSrc: Int,
-    val authorship: Int,
-    val publishDate: Int,
-    val publisher: Int,
-    val awards: Int,
-    val genres: Int,
-    val rating: Int
-)
-
 data class PlaceholderBook(
     val title: Int,
     val imgSrc: Int,
