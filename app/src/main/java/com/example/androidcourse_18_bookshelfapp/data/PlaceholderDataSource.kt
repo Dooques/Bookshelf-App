@@ -1,10 +1,8 @@
 package com.example.androidcourse_18_bookshelfapp.data
 
-import androidx.compose.ui.res.stringResource
 import com.example.androidcourse_18_bookshelfapp.R
-import com.example.androidcourse_18_bookshelfapp.model.Bookshelf
+import com.example.androidcourse_18_bookshelfapp.model.BookshelfModel
 import com.example.androidcourse_18_bookshelfapp.model.PlaceholderBook
-import com.example.androidcourse_18_bookshelfapp.model.PlaceholderBookData
 
 class PlaceholderDataSource {
     val placeholderBooks: List<PlaceholderBook> = listOf(
@@ -15,24 +13,24 @@ class PlaceholderDataSource {
         PlaceholderBook(R.string.dharma_bums, R.drawable.dharma_bums),
         PlaceholderBook(R.string.fear_and_loathing, R.drawable.fear_and_loathing)
     )
-    val placeHolderBookData: Bookshelf.Volume = Bookshelf.Volume(
+    private val placeHolderBookData: BookshelfModel.Volume = BookshelfModel.Volume(
         id = "0",
-        volumeInfo = Bookshelf.VolumeInfo(
+        volumeInfo = BookshelfModel.VolumeInfo(
             title = "Neuromancer",
             authors = listOf("William Gibson"),
             publisher = "Ace Books",
             publishedDate = "1984",
             description = R.string.neuromancer_description.toString(),
-            industryIdentifiers = listOf(Bookshelf.Identifier("ISBN", R.string.ISBN.toString())),
+            industryIdentifiers = listOf(BookshelfModel.Identifier("ISBN", R.string.ISBN.toString())),
             pageCount = 231,
             printType = "Book",
             categories = listOf("Science Fiction", "Cyberpunk"),
-            imageLinks = Bookshelf.ImageLink(
+            imageLinks = BookshelfModel.ImageLink(
                 large =
                 "https://books.google.com/books/content?id=3CjfiHmIlQQC&printsec=frontcover&img=1&zoom=4&edge=curl&imgtk=AFLRE73c0A4uqYQ3GVvpyfa7NkI-wF1B6ask5ak7px6AqjXcRSnQdbT8m_8QozuImgU7ibDjHZkKtYr0BIPWTm4ACG0BFV2KKvRM8snthxweyhAgdVZA-H_dU9acjhwMtRBYfFeAp0q8&source=gbs_api"),
             language = "en"
         ),
-        saleInfo = Bookshelf.SaleInfo(
+        saleInfo = BookshelfModel.SaleInfo(
             country = "GB",
             saleability = "NOT_FOR_SALE",
             isEbook = false,

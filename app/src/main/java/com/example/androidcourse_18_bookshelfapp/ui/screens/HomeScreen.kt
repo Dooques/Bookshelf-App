@@ -1,7 +1,7 @@
 package com.example.androidcourse_18_bookshelfapp.ui.screens
 
-import android.inputmethodservice.Keyboard
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,22 +28,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.androidcourse_18_bookshelfapp.R
-import com.example.androidcourse_18_bookshelfapp.model.SearchUiState
 import com.example.androidcourse_18_bookshelfapp.ui.theme.AppTypography
 import com.example.androidcourse_18_bookshelfapp.ui.theme.BookshelfTheme
 import com.example.androidcourse_18_bookshelfapp.ui.theme.bodyFontFamily
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -132,6 +127,13 @@ fun SearchBar(
                 onDone = { onClick() }
             ),
             maxLines = 1,
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = "Clear Text",
+                    modifier = modifier.clickable { searchValue = "" }
+                )
+                           },
             modifier = modifier
                 .fillMaxWidth(0.7f)
         )

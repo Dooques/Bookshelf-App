@@ -1,6 +1,5 @@
 package com.example.androidcourse_18_bookshelfapp.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -14,13 +13,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.androidcourse_18_bookshelfapp.R
 import com.example.androidcourse_18_bookshelfapp.ui.screens.HomeScreen
 import com.example.androidcourse_18_bookshelfapp.ui.screens.ShelfScreen
 
-enum class BookshelfRoutes(@StringRes val title: Int) {
-    Home(R.string.home),
-    Shelf(R.string.shelf),
+enum class BookshelfRoutes() {
+    Home,
+    Shelf,
 }
 
 @Composable
@@ -49,18 +47,16 @@ fun BookshelfApp(
             )
         }
         composable(route = BookshelfRoutes.Shelf.name) {
+
             val searchUiState by bookshelfViewModel.searchUiState.collectAsState()
-            LaunchedEffect(key1 = true) {
-                bookshelfViewModel.getBookData()
-            }
+            LaunchedEffect(key1 = true) { bookshelfViewModel.getBookData() }
+
             ShelfScreen(
                 setSearchTerms = { bookshelfViewModel.setSearchTerms(it) },
                 searchAgain = {
-                    if (searchUiState.search.isNotEmpty()) {
-                        bookshelfViewModel.getBookData()
-                    }
+                    if (searchUiState.search.isNotEmpty()) { bookshelfViewModel.getBookData() }
                               },
-                bookshelfViewModel = bookshelfViewModel
+                bookshelfViewModel = bookshelfViewModel,
             )
         }
     }

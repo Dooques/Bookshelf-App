@@ -2,7 +2,6 @@ package com.example.androidcourse_18_bookshelfapp.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -23,15 +21,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -47,24 +42,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale.Companion.Fit
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.androidcourse_18_bookshelfapp.R
 import com.example.androidcourse_18_bookshelfapp.data.PlaceholderDataSource
-import com.example.androidcourse_18_bookshelfapp.model.Bookshelf
+import com.example.androidcourse_18_bookshelfapp.model.BookshelfModel
 import com.example.androidcourse_18_bookshelfapp.model.PlaceholderBook
 import com.example.androidcourse_18_bookshelfapp.ui.BookshelfUiState
 import com.example.androidcourse_18_bookshelfapp.ui.BookshelfViewModel
 import com.example.androidcourse_18_bookshelfapp.ui.theme.BookshelfTheme
-import retrofit2.HttpException
 
 @Composable
 fun ShelfScreen(
@@ -84,7 +76,13 @@ fun ShelfScreen(
                     searchValue = it
                     setSearchTerms(searchValue)
                 },
-                trailingIcon = { Icon(Icons.Default.Clear, "Clear Text") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "Clear Text",
+                        modifier = modifier.clickable { searchValue = "" }
+                    )
+                               },
                 maxLines = 1,
                 modifier = modifier
                     .fillMaxWidth(0.7f)
@@ -109,7 +107,7 @@ fun ShelfScreen(
 
 @Composable
 fun ShelfGrid(
-    books: List<Bookshelf.Volume>,
+    books: List<BookshelfModel.Volume>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -131,7 +129,7 @@ fun ShelfGrid(
 
 @Composable
 fun BookCover(
-    book: Bookshelf.Volume,
+    book: BookshelfModel.Volume,
     modifier: Modifier = Modifier
 ) {
     val large = book.volumeInfo.imageLinks.large
@@ -144,7 +142,7 @@ fun BookCover(
     Box {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(large)
+                .data(large.let { medium.let { small } })
                 .build(),
             contentDescription = book.volumeInfo.title,
             contentScale = Fit,
@@ -162,7 +160,7 @@ fun BookCover(
 }
 
 @Composable
-fun BookshelfResultsError(error: HttpException?) {
+fun BookshelfResultsError(error: Exception?) {
     Surface(Modifier.fillMaxSize()) {
         Column {
             Text(error.toString())
@@ -181,17 +179,13 @@ fun BookshelfResultsLoading() {
 
 @Composable
 fun BookInfoCard(
-    volume: Bookshelf.Volume,
+    volume: BookshelfModel.Volume,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val fontSize = 11.sp
     val lineHeight = 12.sp
-
-    var categories = ""
-    for (item in volume.volumeInfo.categories) {
-        categories += "\n" + item
-    }
+    val uriHandler = LocalUriHandler.current
 
     Card(
         shape = RectangleShape,
@@ -222,9 +216,11 @@ fun BookInfoCard(
                     .padding(16.dp)
             ) {
                 // Title and Author
-                Column(modifier = modifier.padding(8.dp)) {
-                    Text(volume.volumeInfo.title)
-                    Text("by ${volume.volumeInfo.authors[0]}")
+                if (volume.volumeInfo.title.isNotEmpty() && volume.volumeInfo.authors.isNotEmpty()) {
+                    Column(modifier = modifier.padding(8.dp)) {
+                        Text(volume.volumeInfo.title)
+                        Text("by ${volume.volumeInfo.authors[0]}")
+                    }
                 }
                 HorizontalDivider()
 
@@ -236,11 +232,17 @@ fun BookInfoCard(
                         lineHeight = lineHeight,
                         modifier = modifier.padding(vertical = 8.dp)
                     )
-                    if (volume.volumeInfo.categories.isNotEmpty()) Text(
+                    if (volume.volumeInfo.categories.isNotEmpty()) {
+                        var categories = ""
+                        for (item in volume.volumeInfo.categories) {
+                            categories += "\n" + item
+                        }
+                        Text(
                         text = "Categories: $categories",
                         fontSize = fontSize,
                         lineHeight = lineHeight
-                    )
+                        )
+                    }
                     val language = if (volume.volumeInfo.language == "en")
                         "English" else "Not English"
                     if (volume.volumeInfo.language.isNotEmpty()) Text(
@@ -262,9 +264,20 @@ fun BookInfoCard(
                         )
                     }
                 }
-                if (volume.saleInfo.retailPrice?.amount?.isNaN() == false) {
+                if (
+                    volume.saleInfo.retailPrice?.amount?.isNaN() == false
+                    && !volume.saleInfo.buyLink.isNullOrBlank()
+                    ) {
                     HorizontalDivider()
-                    Column(modifier.padding(8.dp)) {
+                    Column(
+                        modifier
+                            .padding(8.dp)
+                            .clickable {
+                                val link = volume.saleInfo.buyLink
+                                uriHandler.openUri(link)
+                            }
+
+                    ) {
                         Text("Get the book")
                         AffiliateLink(
                             volume = volume,
@@ -281,7 +294,7 @@ fun BookInfoCard(
 
 @Composable
 fun AffiliateLink(
-    volume: Bookshelf.Volume,
+    volume: BookshelfModel.Volume,
     fontSize: TextUnit,
     lineHeight: TextUnit,
     modifier: Modifier = Modifier) {
@@ -348,7 +361,7 @@ fun BookCoverPreview(
     )
     if (showCard) {
        BookInfoCard(
-           volume = Bookshelf.Volume(),
+           volume = BookshelfModel.Volume(),
            onClick = { onClick() }
        )
     }

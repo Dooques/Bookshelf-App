@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 
-class Bookshelf {
+class BookshelfModel {
 
     @Serializable
     @JsonIgnoreUnknownKeys
